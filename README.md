@@ -6,9 +6,11 @@ Uniswap Price Alerts Telegram Bot
 
 ## What You Need
 
--etherscan API Key
--token's Uniswap liquidity pool address
--token's contract address
+-etherscan API Key  
+-token's Uniswap liquidity pool address  
+-token's contract address  
+-Telegram Bot Access Token  
+-Your Telegram User ID  
 
 ## How To Use
 
