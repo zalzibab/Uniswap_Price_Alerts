@@ -22,9 +22,15 @@ def token_data(token):
 
 def price_pull(api, liquidity_address, token_address):
     weth_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-    eth_balance = int(requests.get('https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress='+weth_address+'&address='+liquidity_address+'&tag=latest&apikey='+api).json()['result'])/1000000000000000000
-    token_balance = int(requests.get('https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress='+token_address+'&address='+liquidity_address+'&tag=latest&apikey='+api).json()['result'])/1000000000000000000
-    eth_usd = float(requests.get('https://api.etherscan.io/api?module=stats&action=ethprice&apikey='+api).json()['result']['ethusd'])
+    while True:
+        try:
+            eth_balance = int(requests.get('https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress='+weth_address+'&address='+liquidity_address+'&tag=latest&apikey='+api).json()['result'])/1000000000000000000
+            token_balance = int(requests.get('https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress='+token_address+'&address='+liquidity_address+'&tag=latest&apikey='+api).json()['result'])/1000000000000000000
+            eth_usd = float(requests.get('https://api.etherscan.io/api?module=stats&action=ethprice&apikey='+api).json()['result']['ethusd'])
+        except json.decoder.JSONDecodeError:
+            continue
+        else:
+            break
     token_usd = round(eth_balance/token_balance*eth_usd, 2)
     
     return token_usd
@@ -75,12 +81,10 @@ token_name = input('Enter token name\n>')
 addresses = token_data(token_name)
 bot_credentials = (input('Enter Telegram Bot Access Token\n>'), input('Telegram User ID\n>'))
 targets = price_targets(token_name)
-buy_price = targets[0]
-sell_price = targets[1]
 
 
 while True:
-    msg = set_alert(token_name, buy_price, sell_price, addresses[0], addresses[1])
+    msg = set_alert(token_name, targets[0], targets[1], addresses[0], addresses[1])
     if msg:
         telegram_sendText(bot_credentials, msg)
         time.sleep(60*60*24)
