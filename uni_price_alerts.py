@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# In[ ]:
+
+
 import requests
 import time
+import json
+
+
+# In[ ]:
 
 
 def telegram_sendText(bot_credentials, bot_message):
@@ -13,11 +20,17 @@ def telegram_sendText(bot_credentials, bot_message):
     return response.json()
 
 
+# In[ ]:
+
+
 def token_data(token):
     liquidity_address = input('Enter '+token+' Uniswap liquidity pool address\n>')
     token_address = input('Enter '+token+' contract address\n>')
     
     return liquidity_address,token_address
+
+
+# In[ ]:
 
 
 def price_pull(api, liquidity_address, token_address):
@@ -34,6 +47,9 @@ def price_pull(api, liquidity_address, token_address):
     token_usd = round(eth_balance/token_balance*eth_usd, 2)
     
     return token_usd
+
+
+# In[ ]:
 
 
 def price_targets(token):
@@ -60,6 +76,9 @@ def price_targets(token):
     return buy_price,sell_price
 
 
+# In[ ]:
+
+
 def set_alert(token, buy_price, sell_price, liquidity_pool, contract):
     token_usd = price_pull(etherscan_api, liquidity_pool, contract)
     if token_usd <= buy_price:
@@ -76,11 +95,17 @@ Current {token} Price: ${token_usd}'''
     return msg
 
 
+# In[ ]:
+
+
 etherscan_api = input('Enter etherscan API Key\n>')
 token_name = input('Enter token name\n>')
 addresses = token_data(token_name)
 bot_credentials = (input('Enter Telegram Bot Access Token\n>'), input('Telegram User ID\n>'))
 targets = price_targets(token_name)
+
+
+# In[ ]:
 
 
 while True:
